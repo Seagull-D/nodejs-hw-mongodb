@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
-import 'dotenv/config';
+import { getEnvVar } from './utils/getEnvVar.js';
+import ContactColection from './db/models/contact.js';
 
 export const setupServer = () => {
   const app = express();
@@ -15,9 +16,12 @@ export const setupServer = () => {
     }),
   );
 
-  app.get('/', (req, res) => {
+  app.get('/api/contacts', async (req, res) => {
+    const data = await ContactColection.find();
     res.json({
-      message: ' is ok',
+      status: 200,
+      message: ' Successfully found contacts',
+      data,
     });
   });
 
@@ -26,6 +30,6 @@ export const setupServer = () => {
       message: `${req.url} not found `,
     });
   });
-  const port = Number(process.env.PORT);
+  const port = Number(getEnvVar('PORT', 3000));
   app.listen(port, () => console.log(`Server is running on port ${port}`));
 };

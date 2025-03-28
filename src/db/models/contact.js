@@ -27,6 +27,6 @@ const contactSchema = new Schema(
   { timestamps: true },
 );
 
-const ContactColection = model('contact', contactSchema);
+const ContactColection = model('seagull', contactSchema);
 
 export default ContactColection;

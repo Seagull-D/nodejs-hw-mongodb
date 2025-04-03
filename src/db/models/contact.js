@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, version } from 'mongoose';
 
 const contactSchema = new Schema(
   {
@@ -24,7 +24,7 @@ const contactSchema = new Schema(
       default: 'personal',
     },
   },
-  { timestamps: true },
+  { versionKey: false, timestamps: true },
 );
 
 const ContactColection = model('seagull', contactSchema);

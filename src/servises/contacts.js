@@ -25,3 +25,6 @@ export const upsertContact = async (contactId, payload, option = {}) => {
     isNew: Boolean(rawResult.lastErrorObject.upserted),
   };
 };
+
+export const deleteContactById = (contactId) =>
+  ContactColection.findOneAndDelete({ _id: contactId });

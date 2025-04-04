@@ -58,15 +58,16 @@ export const upsertContactController = async (req, res) => {
 
 export const updateContactController = async (req, res) => {
   const { contactId } = req.params;
-  const result = await upsertContact(contactId, req.body);
+  const { data } = await upsertContact(contactId, req.body);
+  console.log(data);
 
-  if (!result) {
+  if (!data) {
     throw createHttpError(404, `Contact with ${contactId} not found`);
   }
   res.status(200).json({
     status: 200,
     message: 'Successfully update a contact!',
-    data: result,
+    data,
   });
 };
 

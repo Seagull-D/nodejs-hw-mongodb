@@ -13,12 +13,17 @@ import {
   addValidateContacts,
   updateValidateContacts,
 } from '../validation/contacts.js';
+import { isValidId } from '../middlewares/isValidId.js';
 
 const contactRouter = Router();
 
 contactRouter.get('/', ctrlWrapper(getContactsController));
 
-contactRouter.get('/:contactId', ctrlWrapper(getContactsByITController));
+contactRouter.get(
+  '/:contactId',
+  isValidId,
+  ctrlWrapper(getContactsByITController),
+);
 
 contactRouter.post(
   '/',
@@ -28,16 +33,22 @@ contactRouter.post(
 
 contactRouter.put(
   '/:contactId',
+  isValidId,
   validateBody(addValidateContacts),
   ctrlWrapper(upsertContactController),
 );
 
 contactRouter.patch(
   '/:contactId',
+  isValidId,
   validateBody(updateValidateContacts),
   ctrlWrapper(updateContactController),
 );
 
-contactRouter.delete('/:contactId', ctrlWrapper(deleteContactController));
+contactRouter.delete(
+  '/:contactId',
+  isValidId,
+  ctrlWrapper(deleteContactController),
+);
 
 export default contactRouter;

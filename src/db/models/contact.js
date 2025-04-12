@@ -6,10 +6,14 @@ const contactSchema = new Schema(
     name: {
       type: String,
       required: true,
+      minlength: 3,
+      maxlength: 20,
     },
     phoneNumber: {
       type: String,
       required: true,
+      minlength: 3,
+      maxlength: 20,
     },
     email: {
       type: String,

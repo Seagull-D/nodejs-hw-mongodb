@@ -35,6 +35,13 @@ const contactSchema = new Schema(
 contactSchema.post('save', handleSaveError);
 contactSchema.pre('findOneAndUpdate', setUpdateSettings);
 contactSchema.post('findOneAndUpdate', handleSaveError);
+export const contactSortFields = [
+  'name',
+  'phoneNumber',
+  'email',
+  'isFavourite',
+  'contactType',
+];
 const ContactColection = model('seagull', contactSchema);
 
 export default ContactColection;

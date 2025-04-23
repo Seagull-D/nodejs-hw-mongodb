@@ -5,4 +5,5 @@ export const registerController = async (req, res) => {
   res.json({
     message: 'Successfull register user',
   });
+  console.log(req.body);
 };

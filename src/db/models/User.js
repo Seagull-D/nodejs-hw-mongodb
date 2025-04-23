@@ -10,14 +10,13 @@ const userSchema = new Schema(
     email: {
       type: String,
       match: emailRedexp,
+      unique: true,
       required: true,
     },
     password: {
       type: String,
       required: true,
     },
-    createdAt: Date(now),
-    updatedAt: Date(now),
   },
   { versionKey: false, timestamps: true },
 );
@@ -28,3 +27,5 @@ userSchema.post('findOneAndUpdate', handleSaveError);
 
 const UserCollection = model('user', userSchema);
 export default UserCollection;
+
+490;

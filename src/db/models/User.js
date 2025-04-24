@@ -1,4 +1,4 @@
-import { Schema, model, now } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { handleSaveError, setUpdateSettings } from './hooks.js';
 import { emailRedexp } from '../../constants/auth.js';
 const userSchema = new Schema(
@@ -27,5 +27,3 @@ userSchema.post('findOneAndUpdate', handleSaveError);
 
 const UserCollection = model('user', userSchema);
 export default UserCollection;
-
-490;

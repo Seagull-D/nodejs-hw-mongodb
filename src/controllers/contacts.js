@@ -1,10 +1,4 @@
-import {
-  getContacts,
-  getContact,
-  addContact,
-  upsertContact,
-  deleteContactById,
-} from '../servises/contacts.js';
+import { getContacts, getContact, addContact, upsertContact, deleteContactById } from '../servises/contacts.js';
 import createHttpError from 'http-errors';
 import { parsPaginationParams } from '../utils/parsPaginationParams.js';
 import { parsSortParams } from '../utils/parsSortParams.js';
@@ -56,9 +50,7 @@ export const upsertContactController = async (req, res) => {
     upsert: true,
   });
   const status = isNew ? 201 : 200;
-  const message = isNew
-    ? 'Successfully created a contact!'
-    : 'Successfully update a contact!';
+  const message = isNew ? 'Successfully created a contact!' : 'Successfully update a contact!';
   res.status(status).json({
     status,
     message,

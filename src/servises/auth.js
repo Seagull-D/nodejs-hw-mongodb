@@ -3,11 +3,10 @@ import UserCollection from '../db/models/User.js';
 import sessionCollection from '../db/models/Session.js';
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'node:crypto';
-import {
-  accessTokenLifeTime,
-  refreshTokenLifeTime,
-} from '../constants/auth.js';
+import { accessTokenLifeTime, refreshTokenLifeTime } from '../constants/auth.js';
 
+export const findSession = (query) => sessionCollection.findOne(query);
+export const findUser = (query) => UserCollection.findOne(query);
 export const registerUser = async (payload) => {
   const { email, password } = payload;
   const user = await UserCollection.findOne({ email });

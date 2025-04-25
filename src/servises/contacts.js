@@ -2,16 +2,12 @@ import ContactColection from '../db/models/contact.js';
 import { calcPaginationData } from '../utils/calcPaginationData.js';
 import { sortList } from '../constants/index.js';
 
-export const getContacts = async ({
-  page = 1,
-  perPage = 1,
-  sortBy,
-  sortOrder = sortList[0],
-  filters = {},
-}) => {
+export const getContacts = async ({ page = 1, perPage = 1, sortBy, sortOrder = sortList[0], filters = {} }) => {
   const skip = (page - 1) * perPage;
   const contactQuery = ContactColection.find();
-
+  if (filters.userId) {
+    contactQuery.where('userId').equals(filters.userId);
+  }
   if (filters.contactType) {
     contactQuery.where('contactType').equals(filters.contactType);
   }
@@ -22,9 +18,7 @@ export const getContacts = async ({
     .skip(skip)
     .limit(perPage)
     .sort({ [sortBy]: sortOrder });
-  const totalItems = await ContactColection.find().countDocuments(
-    contactQuery.getQuery(),
-  );
+  const totalItems = await ContactColection.find().countDocuments(contactQuery.getQuery());
 
   const paginationData = calcPaginationData({ page, perPage, totalItems });
   return {
@@ -34,23 +28,18 @@ export const getContacts = async ({
   };
 };
 
-export const getContact = (contactId) =>
-  ContactColection.findOne({ _id: contactId });
+export const getContact = (contactId) => ContactColection.findOne({ _id: contactId });
 
 export const addContact = (payload) => ContactColection.create(payload);
 
 export const upsertContact = async (contactId, payload, option = {}) => {
   const { upsert } = option;
-  const rawResult = await ContactColection.findByIdAndUpdate(
-    { _id: contactId },
-    payload,
-    {
-      new: true,
-      runValidators: true,
-      upsert,
-      includeResultMetadata: true,
-    },
-  );
+  const rawResult = await ContactColection.findByIdAndUpdate({ _id: contactId }, payload, {
+    new: true,
+    runValidators: true,
+    upsert,
+    includeResultMetadata: true,
+  });
   if (!rawResult || !rawResult.value) return null;
 
   return {
@@ -59,5 +48,4 @@ export const upsertContact = async (contactId, payload, option = {}) => {
   };
 };
 
-export const deleteContactById = (contactId) =>
-  ContactColection.findOneAndDelete({ _id: contactId });
+export const deleteContactById = (contactId) => ContactColection.findOneAndDelete({ _id: contactId });

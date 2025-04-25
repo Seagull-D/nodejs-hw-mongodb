@@ -29,19 +29,18 @@ const contactSchema = new Schema(
       required: true,
       default: typeList[0],
     },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      required: true,
+    },
   },
   { versionKey: false, timestamps: true },
 );
 contactSchema.post('save', handleSaveError);
 contactSchema.pre('findOneAndUpdate', setUpdateSettings);
 contactSchema.post('findOneAndUpdate', handleSaveError);
-export const contactSortFields = [
-  'name',
-  'phoneNumber',
-  'email',
-  'isFavourite',
-  'contactType',
-];
+export const contactSortFields = ['name', 'phoneNumber', 'email', 'isFavourite', 'contactType'];
 const ContactColection = model('seagull', contactSchema);
 
 export default ContactColection;

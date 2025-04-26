@@ -5,6 +5,20 @@ import bcrypt from 'bcrypt';
 import { randomBytes } from 'node:crypto';
 import { accessTokenLifeTime, refreshTokenLifeTime } from '../constants/auth.js';
 
+const createSession = () => {
+  const accessToken = randomBytes(30).toString('base64');
+  const refreshToken = randomBytes(30).toString('base64');
+
+  const accessTokenValidUntil = Date.now() + accessTokenLifeTime;
+  const refreshTokeValidUntil = Date.now() + refreshTokenLifeTime;
+  return {
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil,
+    refreshTokeValidUntil,
+  };
+};
+
 export const findSession = (query) => sessionCollection.findOne(query);
 export const findUser = (query) => UserCollection.findOne(query);
 export const registerUser = async (payload) => {
@@ -28,13 +42,26 @@ export const loginUser = async (payload) => {
     throw createHttpError(401, 'invalid password');
   }
   await sessionCollection.findOneAndDelete({ userId: user._id });
-  const accessToken = randomBytes(30).toString('base64');
-  const refreshToken = randomBytes(30).toString('base64');
+  const newSession = createSession();
   return sessionCollection.create({
     userId: user._id,
-    accessToken,
-    refreshToken,
-    accessTokenValidUntil: Date.now() + accessTokenLifeTime,
-    refreshTokeValidUntil: Date.now() + refreshTokenLifeTime,
+    ...newSession,
+  });
+};
+
+export const refreshUser = async ({ refreshToken, sessionId }) => {
+  const session = await findSession({ refreshToken, _id: sessionId });
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
+  }
+  if (session.refreshTokeValidUntil < Date.now()) {
+    await sessionCollection.findOneAndDelete({ _id: session._id });
+    throw createHttpError(401, 'Session token expired');
+  }
+  await sessionCollection.findOneAndDelete({ _id: session._id });
+  const newSessionRefresh = createSession();
+  return sessionCollection.create({
+    userId: session.userId,
+    ...newSessionRefresh,
   });
 };

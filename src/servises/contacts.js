@@ -28,7 +28,7 @@ export const getContacts = async ({ page = 1, perPage = 1, sortBy, sortOrder = s
   };
 };
 
-export const getContact = (contactId) => ContactColection.findOne({ _id: contactId });
+export const getContact = (contactId, userId) => ContactColection.findOne({ _id: contactId, userId });
 
 export const addContact = (payload) => ContactColection.create(payload);
 

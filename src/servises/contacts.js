@@ -28,13 +28,13 @@ export const getContacts = async ({ page = 1, perPage = 1, sortBy, sortOrder = s
   };
 };
 
-export const getContact = (contactId, userId) => ContactColection.findOne({ _id: contactId, userId });
+export const getContact = async (contactId, userId) => ContactColection.findOne({ _id: contactId, userId });
 
-export const addContact = (payload) => ContactColection.create(payload);
+export const addContact = async (payload) => ContactColection.create(payload);
 
-export const upsertContact = async (contactId, payload, option = {}) => {
+export const upsertContact = async (contactId, userId, payload, option = {}) => {
   const { upsert } = option;
-  const rawResult = await ContactColection.findByIdAndUpdate({ _id: contactId }, payload, {
+  const rawResult = await ContactColection.findOneAndUpdate({ _id: contactId, userId }, payload, {
     new: true,
     runValidators: true,
     upsert,
@@ -48,4 +48,5 @@ export const upsertContact = async (contactId, payload, option = {}) => {
   };
 };
 
-export const deleteContactById = (contactId) => ContactColection.findOneAndDelete({ _id: contactId });
+export const deleteContactById = async (contactId, userId) =>
+  ContactColection.findOneAndDelete({ _id: contactId, userId });

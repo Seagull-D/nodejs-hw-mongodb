@@ -19,19 +19,24 @@ contactRouter.use(authenticate);
 
 contactRouter.get('/', ctrlWrapper(getContactsController));
 
-contactRouter.get('/:contactId', isValidId, ctrlWrapper(getContactsByITController));
+contactRouter.get('/:contactId/:userId', isValidId, ctrlWrapper(getContactsByITController));
 
 contactRouter.post('/', validateBody(addValidateContacts), ctrlWrapper(addContactsController));
 
-contactRouter.put('/:contactId', isValidId, validateBody(addValidateContacts), ctrlWrapper(upsertContactController));
+contactRouter.put(
+  '/:contactId/:userId',
+  isValidId,
+  validateBody(addValidateContacts),
+  ctrlWrapper(upsertContactController),
+);
 
 contactRouter.patch(
-  '/:contactId',
+  '/:contactId/:userId',
   isValidId,
   validateBody(updateValidateContacts),
   ctrlWrapper(updateContactController),
 );
 
-contactRouter.delete('/:contactId', isValidId, ctrlWrapper(deleteContactController));
+contactRouter.delete('/:contactId/:userId', isValidId, ctrlWrapper(deleteContactController));
 
 export default contactRouter;

@@ -3,7 +3,12 @@ import UserCollection from '../db/models/User.js';
 import sessionCollection from '../db/models/Session.js';
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'node:crypto';
+import { sendMail } from '../utils/sendEmail.js';
+import path from 'node:path';
+import fs from 'node:fs/promises';
+import Handlebars from 'handlebars';
 import { accessTokenLifeTime, refreshTokenLifeTime } from '../constants/auth.js';
+import { TEMPLATES_DIR } from '../constants/index.js';
 
 const createSession = () => {
   const accessToken = randomBytes(30).toString('base64');
@@ -19,8 +24,14 @@ const createSession = () => {
   };
 };
 
+const verifyMailPath = path.join(TEMPLATES_DIR, 'verify-email.html');
+const absolutePath = path.resolve(TEMPLATES_DIR);
+
+console.log(absolutePath);
+
 export const findSession = (query) => sessionCollection.findOne(query);
 export const findUser = (query) => UserCollection.findOne(query);
+
 export const registerUser = async (payload) => {
   const { email, password } = payload;
   const user = await UserCollection.findOne({ email });
@@ -28,7 +39,18 @@ export const registerUser = async (payload) => {
     throw createHttpError(409, 'Email in use');
   }
   const hashPassword = await bcrypt.hash(password, 10);
-  return await UserCollection.create({ ...payload, password: hashPassword });
+  const newUser = await UserCollection.create({ ...payload, password: hashPassword });
+
+  const templateSource = await fs.readFile(verifyMailPath, 'utf-8');
+  console.log(templateSource);
+  const verifyEmail = {
+    to: email,
+    subject: 'Update password',
+    text: 'Hello, click on link for verify mail',
+    html: '<h1>Hello, click on link for verify mail</h1>',
+  };
+  sendMail(verifyEmail);
+  return newUser;
 };
 
 export const loginUser = async (payload) => {
@@ -36,6 +58,9 @@ export const loginUser = async (payload) => {
   const user = await UserCollection.findOne({ email });
   if (!user) {
     throw createHttpError(401, 'invalid mail');
+  }
+  if (!user.verify) {
+    throw createHttpError(401, 'mail is not verify');
   }
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {

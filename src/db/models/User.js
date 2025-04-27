@@ -1,6 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { handleSaveError, setUpdateSettings } from './hooks.js';
 import { emailRedexp } from '../../constants/auth.js';
+
 const userSchema = new Schema(
   {
     name: {
@@ -15,6 +16,11 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
+      required: true,
+    },
+    verify: {
+      type: Boolean,
+      default: false,
       required: true,
     },
   },

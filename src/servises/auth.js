@@ -27,6 +27,8 @@ const createSession = () => {
 };
 
 const verifyMailPath = path.join(TEMPLATES_DIR, 'verify-email.html');
+const resetMailPath = path.join(TEMPLATES_DIR, 'reset-password.html');
+
 const appDomain = getEnvVar('APP_DOMAIN');
 const jwsSecret = getEnvVar('JWT_SECRET');
 export const findSession = (query) => sessionCollection.findOne(query);
@@ -50,12 +52,38 @@ export const registerUser = async (payload) => {
   });
   const verifyEmail = {
     to: email,
-    subject: 'Update password',
+    subject: 'mail confirmation',
     text: 'Hello, click on link for verify mail',
     html,
   };
   sendMail(verifyEmail);
   return newUser;
+};
+
+export const verifyUser = (token) => {
+  try {
+    const { email } = jwt.verify(token, jwsSecret);
+    return UserCollection.findOneAndUpdate({ email }, { verify: true });
+  } catch (error) {
+    throw createHttpError(401, error.message);
+  }
+};
+
+export const sendResetEmail = async (email) => {
+  const resetToken = jwt.sign({ email }, jwsSecret, { expiresIn: '5m' });
+
+  const templateSource = await fs.readFile(resetMailPath, 'utf-8');
+  const template = Handlebars.compile(templateSource);
+  const html = template({
+    resedPassworLink: `${appDomain}/reset-password?token=${resetToken}`,
+  });
+  const resedPasswordEmail = {
+    to: email,
+    subject: 'reset password',
+    text: 'Hello, click on link resed password',
+    html,
+  };
+  sendMail(resedPasswordEmail);
 };
 
 export const loginUser = async (payload) => {

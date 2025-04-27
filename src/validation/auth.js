@@ -10,3 +10,7 @@ export const authLoginSchema = Joi.object({
   email: Joi.string().pattern(emailRedexp).required(),
   password: Joi.string().min(6).required(),
 });
+
+export const authResetSchema = Joi.object({
+  email: Joi.string().pattern(emailRedexp).required(),
+});

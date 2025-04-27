@@ -7,6 +7,8 @@ import { sendMail } from '../utils/sendEmail.js';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import Handlebars from 'handlebars';
+import { getEnvVar } from '../utils/getEnvVar.js';
+import jwt from 'jsonwebtoken';
 import { accessTokenLifeTime, refreshTokenLifeTime } from '../constants/auth.js';
 import { TEMPLATES_DIR } from '../constants/index.js';
 
@@ -25,10 +27,8 @@ const createSession = () => {
 };
 
 const verifyMailPath = path.join(TEMPLATES_DIR, 'verify-email.html');
-const absolutePath = path.resolve(TEMPLATES_DIR);
-
-console.log(absolutePath);
-
+const appDomain = getEnvVar('APP_DOMAIN');
+const jwsSecret = getEnvVar('JWT_SECRET');
 export const findSession = (query) => sessionCollection.findOne(query);
 export const findUser = (query) => UserCollection.findOne(query);
 
@@ -40,14 +40,19 @@ export const registerUser = async (payload) => {
   }
   const hashPassword = await bcrypt.hash(password, 10);
   const newUser = await UserCollection.create({ ...payload, password: hashPassword });
-
+  const token = jwt.sign({ email }, jwsSecret, {
+    expiresIn: '24h',
+  });
   const templateSource = await fs.readFile(verifyMailPath, 'utf-8');
-  console.log(templateSource);
+  const template = Handlebars.compile(templateSource);
+  const html = template({
+    verifyLink: `${appDomain}/verify?token=${token}`,
+  });
   const verifyEmail = {
     to: email,
     subject: 'Update password',
     text: 'Hello, click on link for verify mail',
-    html: '<h1>Hello, click on link for verify mail</h1>',
+    html,
   };
   sendMail(verifyEmail);
   return newUser;

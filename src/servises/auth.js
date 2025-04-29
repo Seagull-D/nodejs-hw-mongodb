@@ -1,5 +1,5 @@
 import createHttpError from 'http-errors';
-import UserCollection from '../db/models/User.js';
+import UsersCollection from '../db/models/User.js';
 import sessionCollection from '../db/models/Session.js';
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'node:crypto';
@@ -32,16 +32,16 @@ const resetMailPath = path.join(TEMPLATES_DIR, 'reset-password.html');
 const appDomain = getEnvVar('APP_DOMAIN');
 const jwsSecret = getEnvVar('JWT_SECRET');
 export const findSession = (query) => sessionCollection.findOne(query);
-export const findUser = (query) => UserCollection.findOne(query);
+export const findUser = (query) => UsersCollection.findOne(query);
 
 export const registerUser = async (payload) => {
   const { email, password } = payload;
-  const user = await UserCollection.findOne({ email });
+  const user = await UsersCollection.findOne({ email });
   if (user) {
     throw createHttpError(409, 'Email in use');
   }
   const hashPassword = await bcrypt.hash(password, 10);
-  const newUser = await UserCollection.create({ ...payload, password: hashPassword });
+  const newUser = await UsersCollection.create({ ...payload, password: hashPassword });
   const token = jwt.sign({ email }, jwsSecret, {
     expiresIn: '24h',
   });
@@ -63,14 +63,18 @@ export const registerUser = async (payload) => {
 export const verifyUser = (token) => {
   try {
     const { email } = jwt.verify(token, jwsSecret);
-    return UserCollection.findOneAndUpdate({ email }, { verify: true });
+    return UsersCollection.findOneAndUpdate({ email }, { verify: true });
   } catch (error) {
     throw createHttpError(401, error.message);
   }
 };
 
 export const sendResetEmail = async (email) => {
-  const resetToken = jwt.sign({ email }, jwsSecret, { expiresIn: '5m' });
+  const user = await UsersCollection.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+  const resetToken = jwt.sign({ email }, jwsSecret, { expiresIn: '15m' });
 
   const templateSource = await fs.readFile(resetMailPath, 'utf-8');
   const template = Handlebars.compile(templateSource);
@@ -83,12 +87,41 @@ export const sendResetEmail = async (email) => {
     text: 'Hello, click on link resed password',
     html,
   };
-  sendMail(resedPasswordEmail);
+  try {
+    await sendMail(resedPasswordEmail);
+  } catch (error) {
+    console.error('Помилка під час надсилання листа для скидання пароля:', error);
+    throw new Error('Не вдалося надіслати лист для скидання пароля');
+  }
+};
+
+export const resetPassword = async (payload) => {
+  let entries;
+
+  try {
+    entries = jwt.verify(payload.token, getEnvVar('JWT_SECRET'));
+    console.log(entries);
+  } catch (err) {
+    if (err instanceof Error) throw createHttpError(401, err.message);
+    throw err;
+  }
+
+  const user = await UsersCollection.findOne({
+    email: entries.email,
+  });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
+
+  await UsersCollection.updateOne({ _id: user._id }, { password: encryptedPassword });
 };
 
 export const loginUser = async (payload) => {
   const { email, password } = payload;
-  const user = await UserCollection.findOne({ email });
+  const user = await UsersCollection.findOne({ email });
   if (!user) {
     throw createHttpError(401, 'invalid mail');
   }

@@ -7,6 +7,7 @@ import authRouter from './rourters/auth.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
+import { UPLOAD_FILE_DIR } from './constants/index.js';
 export const setupServer = () => {
   const app = express();
   app.use(cors());
@@ -19,6 +20,7 @@ export const setupServer = () => {
   //     },
   //   }),
   // );
+  app.use('/upload', express.static(UPLOAD_FILE_DIR));
   app.use('/auth', authRouter);
   app.use('/contacts', contactRouter);
 

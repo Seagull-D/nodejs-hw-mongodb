@@ -90,8 +90,7 @@ export const sendResetEmail = async (email) => {
   try {
     await sendMail(resedPasswordEmail);
   } catch (error) {
-    console.error('Помилка під час надсилання листа для скидання пароля:', error);
-    throw new Error('Не вдалося надіслати лист для скидання пароля');
+    console.error('erropr send message', error);
   }
 };
 

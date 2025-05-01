@@ -48,7 +48,7 @@ export const registerUser = async (payload) => {
   const templateSource = await fs.readFile(verifyMailPath, 'utf-8');
   const template = Handlebars.compile(templateSource);
   const html = template({
-    verifyLink: `${appDomain}/verify?token=${token}`,
+    verifyLink: `${appDomain}auth/verify?token=${token}`,
   });
   const verifyEmail = {
     to: email,
@@ -79,7 +79,7 @@ export const sendResetEmail = async (email) => {
   const templateSource = await fs.readFile(resetMailPath, 'utf-8');
   const template = Handlebars.compile(templateSource);
   const html = template({
-    resedPassworLink: `${appDomain}/reset-password?token=${resetToken}`,
+    resedPassworLink: `${appDomain}/auth/reset-password?token=${resetToken}`,
   });
   const resedPasswordEmail = {
     to: email,

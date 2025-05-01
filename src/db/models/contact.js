@@ -1,14 +1,20 @@
-import { Schema, model, version } from 'mongoose';
+import { Schema, model } from 'mongoose';
+import { typeList } from '../../constants/contacts.js';
+import { handleSaveError, setUpdateSettings } from './hooks.js';
 
 const contactSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
+      minlength: 3,
+      maxlength: 20,
     },
     phoneNumber: {
       type: String,
       required: true,
+      minlength: 3,
+      maxlength: 20,
     },
     email: {
       type: String,
@@ -16,17 +22,31 @@ const contactSchema = new Schema(
     isFavourite: {
       type: Boolean,
       default: false,
+      required: true,
     },
     contactType: {
       type: String,
-      enum: ['work', 'home', 'personal'],
+      enum: typeList,
       required: true,
-      default: 'personal',
+      default: typeList[0],
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
+      required: true,
+    },
+    photo: {
+      type: String,
+      required: false,
+      default: null,
     },
   },
   { versionKey: false, timestamps: true },
 );
-
+contactSchema.post('save', handleSaveError);
+contactSchema.pre('findOneAndUpdate', setUpdateSettings);
+contactSchema.post('findOneAndUpdate', handleSaveError);
+export const contactSortFields = ['name', 'phoneNumber', 'email', 'isFavourite', 'contactType'];
 const ContactColection = model('seagull', contactSchema);
 
 export default ContactColection;

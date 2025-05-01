@@ -4,7 +4,8 @@ import { parsPaginationParams } from '../utils/parsPaginationParams.js';
 import { parsSortParams } from '../utils/parsSortParams.js';
 import { contactSortFields } from '../db/models/contact.js';
 import { parseContactFilterParams } from '../utils/filters/parseContactFilterParams.js';
-import { saveFileToloacal } from '../validation/saveFileToLocal.js';
+import { saveFileToloacal } from '../utils/saveFileToLocal.js';
+import { saveFileToCloud } from '../utils/saveFileToCloud.js';
 
 export const getContactsController = async (req, res) => {
   const paginationParams = parsPaginationParams(req.query);
@@ -71,7 +72,8 @@ export const updateContactController = async (req, res) => {
   const { _id: userId } = req.user;
   let posterURL = null;
   if (req.file) {
-    posterURL = await saveFileToloacal(req.file);
+    // posterURL = await saveFileToloacal(req.file);
+    posterURL = await saveFileToCloud(req.file);
   }
   const { data } = await upsertContact(contactId, userId, { ...req.body, posterURL }, { upsert: false });
 

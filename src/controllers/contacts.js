@@ -69,11 +69,11 @@ export const upsertContactController = async (req, res) => {
 export const updateContactController = async (req, res) => {
   const { contactId } = req.params;
   const { _id: userId } = req.user;
-  let posterURL = null;
+  let photo = null;
   if (req.file) {
-    posterURL = await saveFile(req.file);
+    photo = await saveFile(req.file);
   }
-  const { data } = await upsertContact(contactId, userId, { ...req.body, posterURL }, { upsert: false });
+  const { data } = await upsertContact(contactId, userId, { ...req.body, photo }, { upsert: false });
 
   if (!data) {
     throw createHttpError(404, `Contact with ${contactId} not found`);

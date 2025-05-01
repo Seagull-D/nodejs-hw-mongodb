@@ -29,7 +29,7 @@ contactRouter.put('/:contactId', isValidId, validateBody(addValidateContacts), c
 contactRouter.patch(
   '/:contactId',
   isValidId,
-  upload.single('posterURL'),
+  upload.single('photo'),
   validateBody(updateValidateContacts),
   ctrlWrapper(updateContactController),
 );

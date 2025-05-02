@@ -40,7 +40,11 @@ export const getContactsByITController = async (req, res) => {
 
 export const addContactsController = async (req, res) => {
   const { _id: userId } = req.user;
-  const data = await addContact({ ...req.body, userId });
+  let photo = null;
+  if (req.file) {
+    photo = await saveFile(req.file);
+  }
+  const data = await addContact({ ...req.body, userId, photo });
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',

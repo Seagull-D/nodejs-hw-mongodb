@@ -22,7 +22,7 @@ contactRouter.get('/', ctrlWrapper(getContactsController));
 
 contactRouter.get('/:contactId', isValidId, ctrlWrapper(getContactsByITController));
 
-contactRouter.post('/', validateBody(addValidateContacts), ctrlWrapper(addContactsController));
+contactRouter.post('/', upload.single('photo'), validateBody(addValidateContacts), ctrlWrapper(addContactsController));
 
 contactRouter.put('/:contactId', isValidId, validateBody(addValidateContacts), ctrlWrapper(upsertContactController));
 

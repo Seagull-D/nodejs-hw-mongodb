@@ -20,9 +20,9 @@ authRouter.get('/verify', ctrlWrapper(verifyController));
 
 authRouter.post('/login', validateBody(authLoginSchema), ctrlWrapper(LoginController));
 
-authRouter.post('/send-reset-emai', validateBody(authResetMailSchema), ctrlWrapper(resetMailController));
+authRouter.post('/send-reset-email', validateBody(authResetMailSchema), ctrlWrapper(resetMailController));
 
-authRouter.post('/reset-password', validateBody(resetPasswordSchema), ctrlWrapper(resetPasswordController));
+authRouter.post('/reset-pwd', validateBody(resetPasswordSchema), ctrlWrapper(resetPasswordController));
 
 authRouter.post('/refresh', ctrlWrapper(refreshController));
 

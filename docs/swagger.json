@@ -17,6 +17,11 @@
       "url": "https://nodejs-hw-mongodb-giwx.onrender.com"
     }
   ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "tags": [
     {
       "name": "contacts",
@@ -500,15 +505,7 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "id"
-                ],
                 "properties": {
-                  "id": {
-                    "description": "contact's ID",
-                    "type": "string",
-                    "example": "65e4decdd286b30065d54af9"
-                  },
                   "name": {
                     "description": "contact's name",
                     "type": "string",
@@ -611,25 +608,6 @@
             }
           }
         ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "id"
-                ],
-                "properties": {
-                  "id": {
-                    "description": "contact's ID",
-                    "type": "string",
-                    "example": "65e4decdd286b30065d54af9"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Create a contact",

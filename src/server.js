@@ -21,10 +21,10 @@ export const setupServer = () => {
   //     },
   //   }),
   // );
+  app.use('/api-docs', swaggerDocs());
   app.use('/upload', express.static(UPLOAD_FILE_DIR));
   app.use('/auth', authRouter);
   app.use('/contacts', contactRouter);
-  app.use('/api-docs', swaggerDocs());
 
   app.use(notFoundHandler);
   app.use(errorHandler);

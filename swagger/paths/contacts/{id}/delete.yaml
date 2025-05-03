@@ -14,18 +14,6 @@ parameters:
     schema:
       type: string
       example: '65ca67e7ae7f10c88b598384'
-requestBody:
-  content:
-    multipart/form-data:
-      schema:
-        type: object
-        required:
-          - id
-        properties:
-          id:
-            description: "contact's ID"
-            type: string
-            example: '65e4decdd286b30065d54af9'
 
 responses:
   '200':

@@ -3,7 +3,7 @@
 tags:
   - contacts
 summary: Create or update contact
-operationId: create/update Contact
+operationId: create/updateContact
 description: 'Create or update contact with payload'
 security:
   - bearerAuth: []
@@ -21,10 +21,6 @@ requestBody:
         type: object
 
         properties:
-          id:
-            description: "contact's ID"
-            type: string
-            example: '65e4decdd286b30065d54af9'
           name:
             description: "contact's name"
             type: string

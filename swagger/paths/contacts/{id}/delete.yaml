@@ -15,26 +15,6 @@ parameters:
       type: string
       example: '65ca67e7ae7f10c88b598384'
 responses:
-  '200':
-    description: Create a contact
-    content:
-      application/json:
-        schema:
-          type: object
-          required:
-            - status
-            - message
-            - data
-          properties:
-            status:
-              type: integer
-              example: 200
-            message:
-              type: string
-              example: 'Successfully update a contact!'
-            data:
-              type: object
-              $ref: ../../../components/schemas/contact.yaml
   '204':
     description: No Content
   '404':
